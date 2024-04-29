@@ -1,34 +1,74 @@
 @import '~@fluentui/react/dist/sass/References.scss';
 
-.backOffice {
-  overflow: hidden;
-  padding: 1em;
-  color: "[theme:bodyText, default: #323130]";
-  color: var(--bodyText);
-  &.teams {
-    font-family: $ms-font-family-fallbacks;
-  }
+.backOfficeContainer {
+  background-color: #DFF9F1;
+  padding: 20px;
 }
 
-.welcome {
-  text-align: center;
+.formContainer {
+  margin-bottom: 20px;
 }
 
-.welcomeImage {
+.inputField {
+  color: #002920;
+  font-family: Montserrat, sans-serif;
+  margin-bottom: 10px; /* Ajout d'une marge en bas */
+}
+
+.inputField input,
+.inputField select {
+  width: 100%; /* Permet aux champs de saisie de s'étendre sur toute la largeur du conteneur */
+  text-align: left; /* Aligne le texte à gauche dans les champs de saisie */
+  padding: 0.5rem; /* Augmente la taille de la barre de saisie */
+}
+
+
+/* Style pour les barres de saisie */
+.inputField input {
+  width: 100%; /* Remplissage complet du conteneur parent */
+  height: 40px; /* Hauteur plus grande */
+  padding: 10px; /* Espace interne */
+  font-size: 16px; /* Taille de police */
+  box-sizing: border-box; /* Inclure le padding dans la largeur */
+  text-align: start; /* Aligner le texte au début de la barre */
+}
+
+.iconSpace {
+  margin-right: 9px; /* Ajustez la valeur selon votre préférence */
+}
+
+
+.button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.tableContainer {
+  margin-top: 20px;
+}
+
+table {
   width: 100%;
-  max-width: 420px;
+  border-collapse: collapse;
 }
 
-.links {
-  a {
-    text-decoration: none;
-    color: "[theme:link, default:#03787c]";
-    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
 
-    &:hover {
-      text-decoration: underline;
-      color: "[theme:linkHovered, default: #014446]";
-      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
-    }
-  }
+th {
+  background-color: #f0f0f0;
+}
+
+tr:hover {
+  background-color: #e9e9e9;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: space-between;
 }

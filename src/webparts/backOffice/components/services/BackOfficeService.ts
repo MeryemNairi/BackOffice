@@ -6,7 +6,7 @@ export interface IInternalRecrutement {
   short_description: string;
   deadline: Date;
   city: 'rabat' | 'fes' | 'rabat&fes';
-  attachment_name: string; 
+  attachment_name: string; // Modifier le nom de l'attribut
 }
 
 export default class BackOfficeService {
@@ -26,13 +26,15 @@ export default class BackOfficeService {
 
   async postInternalRecrutement(recrutement: IInternalRecrutement): Promise<void> {
     try {
-      await sp.web.lists.getByTitle("BackOfficeV1").items.add({
-        offre_title: recrutement.offre_title,
+      const itemData = {
+        Title: recrutement.offre_title,
         short_description: recrutement.short_description,
-        deadline: recrutement.deadline,
+        deadline: recrutement.deadline.toISOString(),
         city: recrutement.city,
-        attachment_name: recrutement.attachment_name, // Ajout de la nouvelle colonne
-      });
+        attachment_name: recrutement.attachment_name, // Utilisez la nouvelle propriété pour l'URL du fichier PDF
+      };
+
+      await sp.web.lists.getByTitle("BackOfficeV1").items.add(itemData);
     } catch (error) {
       throw new Error('Error submitting internal recrutement');
     }
@@ -43,13 +45,15 @@ export default class BackOfficeService {
       if (!recrutement.Id) {
         throw new Error('Id is required for updating internal recrutement');
       }
-      await sp.web.lists.getByTitle("BackOfficeV1").items.getById(recrutement.Id).update({
-        offre_title: recrutement.offre_title,
+      const itemData = {
+        Title: recrutement.offre_title,
         short_description: recrutement.short_description,
         deadline: recrutement.deadline,
         city: recrutement.city,
-        attachment_name: recrutement.attachment_name,
-      });
+        attachment_name: recrutement.attachment_name, // Utilisez la nouvelle propriété pour l'URL du fichier PDF
+      };
+
+      await sp.web.lists.getByTitle("BackOfficeV1").items.getById(recrutement.Id).update(itemData);
     } catch (error) {
       throw new Error('Error updating internal recrutement');
     }

@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import BackOfficeService, { IInternalRecrutement } from './services/BackOfficeService';
+import styles from './BackOffice.module.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const BackOffice: React.FC = () => {
   const [offreTitle, setOffreTitle] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [city, setCity] = useState<'rabat' | 'fes' | 'rabat&fes' | ''>('');
+  const [attachmentName, setAttachmentName] = useState<string | null>(null); // Nouveau state pour stocker le nom du fichier
   const [internalRecrutements, setInternalRecrutements] = useState<IInternalRecrutement[]>([]);
-  const [attachmentName, setAttachmentName] = useState('');
   const [selectedRecrutement, setSelectedRecrutement] = useState<IInternalRecrutement | null>(null);
 
   const backOfficeService = new BackOfficeService();
@@ -29,7 +32,7 @@ const BackOffice: React.FC = () => {
           short_description: shortDescription,
           deadline: deadline!,
           city: city,
-          attachment_name: attachmentName,
+          attachment_name: attachmentName, // Utiliser le nom de l'attachement existant
         });
       } else {
         // Add new recrutement
@@ -48,7 +51,7 @@ const BackOffice: React.FC = () => {
       setShortDescription('');
       setDeadline(null);
       setCity('');
-      setAttachmentName('');
+      setAttachmentName(null);
       setSelectedRecrutement(null);
     } catch (error) {
       console.error('Error submitting internal recrutement:', error);
@@ -91,26 +94,33 @@ const BackOffice: React.FC = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setAttachmentName(files[0].name); // Utiliser le nom du fichier sélectionné
+    }
+  };
+
   return (
-    <div>
+    <div className={styles.backOfficeContainer}>
       <h2>Back Office</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
+      <form className={styles.formContainer} onSubmit={handleSubmit}>
+        <label className={styles.inputField}>
           Offre Title:
           <input type="text" value={offreTitle} onChange={(e) => setOffreTitle(e.target.value)} />
         </label>
         <br />
-        <label>
+        <label className={styles.inputField}>
           Short Description:
           <input type="text" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} />
         </label>
         <br />
-        <label>
+        <label className={styles.inputField}>
           Deadline:
           <input type="date" value={deadline?.toISOString().split('T')[0]} onChange={(e) => setDeadline(new Date(e.target.value))} />
         </label>
         <br />
-        <label>
+        <label className={styles.inputField}>
           City:
           <select value={city} onChange={(e) => setCity(e.target.value as 'rabat' | 'fes' | 'rabat&fes')} >
             <option value="">Select City</option>
@@ -120,43 +130,48 @@ const BackOffice: React.FC = () => {
           </select>
         </label>
         <br />
-        <label>
+        <label className={styles.inputField}>
           Attachment Name:
-          <input type="text" value={attachmentName} onChange={(e) => setAttachmentName(e.target.value)} />
+          <input type="file" onChange={handleFileChange} />
         </label>
+        <br />
         <button type="submit">{selectedRecrutement ? 'Update' : 'Submit'}</button>
       </form>
 
-      <h3>Internal Recrutements</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Offre Title</th>
-            <th>Short Description</th>
-            <th>Deadline</th>
-            <th>City</th>
-            <th>Attachment Name</th>
-            <th>Action</th> {/* Nouvelle colonne */}
-          </tr>
-        </thead>
-        <tbody>
-          {internalRecrutements.map((recrutement, index) => (
-            <tr key={index}>
-              <td>{recrutement.offre_title}</td>
-              <td>{recrutement.short_description}</td>
-              <td>{recrutement.deadline.toISOString().split('T')[0]}</td>
-              <td>{recrutement.city}</td>
-              <td>{recrutement.attachment_name}</td>
-              <td>
-                <button onClick={() => handleUpdate(recrutement)}>Update</button>
-                <button onClick={() => handleDelete(recrutement.Id)}>Delete</button>
-              </td>
+      <div className={styles.tableContainer}>
+        <h3>Internal Recrutements</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Offre Title</th>
+              <th>Short Description</th>
+              <th>Deadline</th>
+              <th>City</th>
+              <th>Attachment Name</th> {/* Nouvelle colonne pour afficher le nom du fichier */}
+              <th>Action</th> {/* Nouvelle colonne */}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {internalRecrutements.map((recrutement, index) => (
+              <tr key={index}>
+                <td>{recrutement.offre_title}</td>
+                <td>{recrutement.short_description}</td>
+                <td>{recrutement.deadline.toISOString().split('T')[0]}</td>
+                <td>{recrutement.city}</td>
+                <td>{recrutement.attachment_name}</td> {/* Afficher le nom de l'attachement */}
+                <td>
+                  <button onClick={() => handleUpdate(recrutement)}>Update</button>
+                  <span className={styles.iconSpace}></span>
+                  <FontAwesomeIcon icon={faTrash} onClick={() => handleDelete(recrutement.Id)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
+
 };
 
 export default BackOffice;
