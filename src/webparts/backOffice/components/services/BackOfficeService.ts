@@ -1,12 +1,12 @@
 import { sp } from '@pnp/sp/presets/all';
 
 export interface IInternalRecrutement {
-  Id?: number; // Ajout de la propriété Id
+  Id?: number; 
   offre_title: string;
   short_description: string;
   deadline: Date;
   city: 'rabat' | 'fes' | 'rabat&fes';
-  attachment_name: string; // Ajout de la nouvelle colonne
+  attachment_name: string; 
 }
 
 export default class BackOfficeService {
@@ -52,6 +52,14 @@ export default class BackOfficeService {
       });
     } catch (error) {
       throw new Error('Error updating internal recrutement');
+    }
+  }
+
+  async deleteInternalRecrutement(recrutementId: number): Promise<void> {
+    try {
+      await sp.web.lists.getByTitle("BackOfficeV1").items.getById(recrutementId).delete();
+    } catch (error) {
+      throw new Error('Error deleting internal recrutement');
     }
   }
 }

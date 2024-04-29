@@ -78,6 +78,19 @@ const BackOffice: React.FC = () => {
     setAttachmentName(recrutement.attachment_name);
   };
 
+  const handleDelete = async (recrutementId?: number) => {
+    if (recrutementId && window.confirm('Are you sure you want to delete this recrutement?')) {
+      try {
+        await backOfficeService.deleteInternalRecrutement(recrutementId);
+        const internalRecrutements = await backOfficeService.getInternalRecrutements();
+        setInternalRecrutements(internalRecrutements);
+      } catch (error) {
+        console.error('Error deleting internal recrutement:', error);
+        alert('Error deleting internal recrutement. Please try again.');
+      }
+    }
+  };
+
   return (
     <div>
       <h2>Back Office</h2>
@@ -136,6 +149,7 @@ const BackOffice: React.FC = () => {
               <td>{recrutement.attachment_name}</td>
               <td>
                 <button onClick={() => handleUpdate(recrutement)}>Update</button>
+                <button onClick={() => handleDelete(recrutement.Id)}>Delete</button>
               </td>
             </tr>
           ))}
