@@ -1,16 +1,18 @@
 import { sp } from '@pnp/sp/presets/all';
 
 export interface IInternalRecrutement {
+  Id?: number; // Ajout de la propriété Id
   offre_title: string;
   short_description: string;
   deadline: Date;
   city: 'rabat' | 'fes' | 'rabat&fes';
+  attachment_name: string; // Ajout de la nouvelle colonne
 }
 
 export default class BackOfficeService {
   async getInternalRecrutements(): Promise<IInternalRecrutement[]> {
     try {
-      const response = await sp.web.lists.getByTitle("BackOffice").items.select("offre_title", "short_description", "deadline", "city").get();
+      const response = await sp.web.lists.getByTitle("BackOfficeV1").items.select("Id", "offre_title", "short_description", "deadline", "city", "attachment_name").get();
       
       const formattedInternalRecrutements = response.map((recrutement: any) => ({
         ...recrutement,
@@ -24,14 +26,32 @@ export default class BackOfficeService {
 
   async postInternalRecrutement(recrutement: IInternalRecrutement): Promise<void> {
     try {
-      await sp.web.lists.getByTitle("BackOffice").items.add({
+      await sp.web.lists.getByTitle("BackOfficeV1").items.add({
         offre_title: recrutement.offre_title,
         short_description: recrutement.short_description,
         deadline: recrutement.deadline,
         city: recrutement.city,
+        attachment_name: recrutement.attachment_name, // Ajout de la nouvelle colonne
       });
     } catch (error) {
       throw new Error('Error submitting internal recrutement');
+    }
+  }
+
+  async updateInternalRecrutement(recrutement: IInternalRecrutement): Promise<void> {
+    try {
+      if (!recrutement.Id) {
+        throw new Error('Id is required for updating internal recrutement');
+      }
+      await sp.web.lists.getByTitle("BackOfficeV1").items.getById(recrutement.Id).update({
+        offre_title: recrutement.offre_title,
+        short_description: recrutement.short_description,
+        deadline: recrutement.deadline,
+        city: recrutement.city,
+        attachment_name: recrutement.attachment_name,
+      });
+    } catch (error) {
+      throw new Error('Error updating internal recrutement');
     }
   }
 }
